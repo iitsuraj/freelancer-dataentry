@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.2/flatpickr.min.css">
+    <style>
+        @media screen and (max-width: 767px) {
+            li.paginate_button.page-item.previous {
+                display: inline !important;
+            }
+            li.paginate_button.page-item.next {
+                display: inline !important;
+            }
+            li.paginate_button.page-item {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 d-flex justify-content-md-end justify-content-center my-3">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal_1">
+                        Add a Entry
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modal_2">
+                            Download Copy
+                        </button>
+                </div>
+                <div class="col-md-10 mx-auto">
+                    <div class="table-responsive" id="table-container">
+                        <table id="table" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Company</th>
+                                    <th rowspan="2">Opening Balance</th>
+                                    <th colspan="2">Transitions</th>
+                                    <th rowspan="2">Closing Balance</th>
+                                    <th rowspan="2">
+                                        Date
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal modal-fluid fade" id="modal_1" tabindex="-1" role="dialog" aria-labelledby="modal_1" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center py-4">
+                            <form class="addEntry">
+                                    <input type="hidden" name="_csrf" value="<%= _token  %>" />
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroup-sizing-sm">Company Name</span>
+                                        </div>
+                                        <input type="text" class="form-control company" name="comapny" aria-label="Company Name" aria-describedby="inputGroup-sizing-sm">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroup-sizing-sm">Opening Balance</span>
+                                        </div>
+                                        <input type="number" class="form-control opb" name="opb" aria-label="Opening Balance" aria-describedby="inputGroup-sizing-sm">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroup-sizing-sm">Debit</span>
+                                        </div>
+                                        <input type="number" class="form-control debit" name="debit" aria-label="Debit" aria-describedby="inputGroup-sizing-sm">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroup-sizing-sm">Credit</span>
+                                        </div>
+                                        <input type="number" class="form-control credit" name="credit" aria-label="Credit" aria-describedby="inputGroup-sizing-sm">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add</button>
+
+                            </form>
+                            <button type="button" class="btn btn-primary dismiss" style="visibility: hidden" data-dismiss="modal">Let's do this!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-fluid fade" id="modal_2" tabindex="-1" role="dialog" aria-labelledby="modal_2" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 text-center py-4">
+                            <form class="download" method="POST" action="/filter">
+                                <input type="hidden" name="_csrf" value="<%= _token  %>" />
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroup-sizing-sm">Starting Day</span>
+                                        </div>
+                                        <input type="text" class="form-control flatpickr startDate" name="startDate" aria-label="startingday" data-toggle="date" aria-describedby="inputGroup-sizing-sm" placeholder="Select date">
+                                    </div>
+                                </div><p>to</p><div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroup-sizing-sm">Ending Day</span>
+                                        </div>
+                                        <input type="text" class="form-control flatpickr endDate" name="endDate" aria-label="endingday" data-toggle="date" aria-describedby="inputGroup-sizing-sm" placeholder="Select date">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Download</button>
+
+                            </form>
+                            <button type="button" class="btn btn-primary dismiss" style="visibility: hidden" data-dismiss="modal">Let's do this!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js" integrity="sha256-LlN0a0J3hMkDLO1mhcMwy+GIMbIRV7kvKHx4oCxNoxI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.2/flatpickr.min.js"></script>
+    <script src="./js/quick-website.js"></script>
+    <script>
+        $(document).ready(function() {
+            var table = $('#table')
+            $(".flatpickr").flatpickr({maxDate: "today",disableMobile: "true"});
+            table
+                .dataTable({
+                    responsive: true,
+                    "order": [],
+                    "ajax": {
+                        "url": "/api",
+                        "dataSrc": ""
+                    },
+                    "columns": [{
+                            "data": "company"
+                        }, {
+                            "data": "opb"
+                        }, {
+                            "data": "debit"
+                        }, {
+                            "data": "credit"
+                        }, {
+                            "data": "clb"
+                        }, {
+                            "data": "date",
+                            "render": function(data) {
+                                return moment(data).fromNow()
+                            }
+                        },
+
+                    ]
+                });
+
+            function showNotification(e, a, message) {
+                $.notify({
+                    icon: "add_alert",
+                    message: message
+                }, {
+                    type: 'info',
+                    timer: 3e3,
+                    placement: {
+                        from: e,
+                        align: a
+                    },
+                    onShow: function() {
+                        this.css({
+                            'width': 'auto',
+                            'height': 'auto'
+                        });
+                    },
+                })
+            }
+            $(".addEntry").on("submit", function() {
+                var company = $(this).find('.company').val().trim();
+                var opb = $(this).find('.opb').val();
+                var debit = $(this).find('.debit').val();
+                var credit = $(this).find('.credit').val()
+                $.ajax({
+                    method: 'post',
+                    data: {
+                        company: company,
+                        opb: opb,
+                        debit: debit,
+                        credit: credit
+                    },
+                    url: '/',
+                    beforeSend: function() {
+                        showNotification('top', 'right', "Adding Data")
+                    },
+                    success: function(result) {
+                        showNotification('top', 'right', "Data Added")
+                        $('.dismiss').click()
+                        $('#table').DataTable().ajax.reload();
+                    },
+                    complete: function() {
+                        $('form').each(function() {
+                            this.reset();
+                        });
+                    },
+                    error: function(err) {
+                        console.log(err.responseText);
+                    }
+                })
+                return false
+            });
+            // $(".download").on("submit", function() {
+            //     var startDate = $(this).find('.startDate').val()
+            //     var endDate = $(this).find('.endDate').val()
+            //     $.ajax({
+            //         method: 'post',
+            //         data: {
+            //             endDate: endDate,
+            //             startDate:startDate
+            //         },
+            //         url: '/filter.csv',
+            //         beforeSend: function() {
+            //             showNotification('top', 'right', "Downloading !!!")
+            //         },
+            //         success: function(result) {
+            //             showNotification('top', 'right', "Started ")
+            //             console.log(result)
+            //             $('.dismiss').click()
+            //         },
+            //         complete: function() {
+            //             $('form').each(function() {
+            //                 this.reset();
+            //             });
+            //         },
+            //         error: function(err) {
+            //             console.log(err.responseText);
+            //         }
+            //     })
+            //     return false
+            // });
+        });
+    </script>
+</body>
+
+</html>
